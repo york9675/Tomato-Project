@@ -14,7 +14,9 @@
   </a>
 </p>
 
-**Tempo Sync** is a simple Pomodoro timer with todo list feature to help you stay focused and productive.
+![Screenshot1](./Screenshot1.jpeg)
+
+**Tomato Project** is a simple Pomodoro timer with todo list feature to help you stay focused and productive.
 
 > [!WARNING]\
 > This project is still under development.
