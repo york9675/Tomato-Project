@@ -1,0 +1,481 @@
+<!--
+Oh, it's calling
+I just can't stop, I'm sorry
+I can feel the new day dawning
+I burn up, burn out
+I shouldn't do this to myself
+
+Musician
+by Porter Robinson
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A simple Pomodoro timer to help you stay focused and productive.">
+        <title>25:00 - Tomato Project</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style src="styles.css"></style>
+    </head>
+    <body class="bg-gradient-to-br from-red-50 to-red-100 text-gray-800 font-sans min-h-screen flex items-center justify-center p-4 dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 touch-pan-y">
+        <div class="container mx-auto max-w-xl timer-container">
+            <div class="bg-white rounded-2xl shadow-2xl p-10 text-center dark:bg-gray-800 dark:shadow-md">
+            <h1 class="text-5xl font-bold mb-8 text-red-600 flex items-center justify-center dark:text-red-400">
+                <span class="mr-3">🍅</span>Tomato Project
+            </h1>
+
+            <div class="flex flex-wrap justify-center space-x-2 mb-4 mode-tabs" id="mode-tabs">
+                <button data-mode="pomodoro" class="mode-tab w-full md:w-auto px-4 py-2 rounded-lg transition-colors duration-200 bg-red-500 text-white dark:bg-red-700 relative">
+                Pomodoro
+                </button>                
+                <button data-mode="short-break" class="mode-tab w-full md:w-auto px-4 py-2 rounded-lg transition-colors duration-200 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-gray-700 dark:text-red-300 dark:hover:bg-gray-600">
+                Short Break
+                </button>
+                <button data-mode="long-break" class="mode-tab w-full md:w-auto px-4 py-2 rounded-lg transition-colors duration-200 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-gray-700 dark:text-red-300 dark:hover:bg-gray-600">
+                Long Break
+                </button>
+                <button id="pomodoro-info-btn" class="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100" title="Pomodoro Info">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1 4h.01M12 8h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                    </svg>
+                </button>                
+            </div>
+            
+            <div class="bg-gradient-to-r from-red-400 to-red-600 text-white rounded-xl p-6 mb-6 shadow-lg dark:from-red-700 dark:to-red-900">
+                <div class="text-7xl timer-display font-mono font-bold tracking-wider" id="timer-display">25:00</div>
+                <div class="text-lg mt-2" id="end-time-display"></div>
+            </div>
+
+            <div class="flex flex-wrap justify-center space-x-4 mb-6 action-buttons">
+                <button id="custom-mode-btn" class="w-full md:w-auto bg-red-100 text-red-700 py-3 px-6 rounded-full hover:bg-red-200 transition transform hover:scale-105 shadow-md dark:bg-gray-700 dark:text-red-300 dark:hover:bg-gray-600">
+                ✏️
+                </button>
+                <button id="start-pause-btn" class="w-full md:w-auto bg-green-500 text-white py-3 px-6 rounded-full hover:bg-green-600 transition transform hover:scale-105 shadow-md dark:bg-green-700">
+                Start
+                </button>
+                <button id="reset-btn" class="w-full md:w-auto bg-red-500 text-white py-3 px-6 rounded-full hover:bg-red-600 transition transform hover:scale-105 shadow-md dark:bg-red-700">
+                Reset
+                </button>
+                <button id="settings-btn" class="w-full md:w-auto bg-gray-500 text-white py-3 px-6 rounded-full hover:bg-gray-600 transition transform hover:scale-105 shadow-md dark:bg-gray-700">
+                ⚙️
+                </button>
+            </div>
+
+            <div id="custom-time-input" class="mt-4 hidden">
+                <div class="flex justify-center space-x-2">
+                <input 
+                    type="number" 
+                    id="custom-minutes" 
+                    placeholder="Minutes" 
+                    min="0" 
+                    max="60"
+                    value="25"
+                    class="w-1/2 p-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" 
+                />
+                <span class="text-3xl flex items-center dark:text-gray-100">:</span>
+                <input 
+                    type="number" 
+                    id="custom-seconds" 
+                    placeholder="Seconds" 
+                    min="0" 
+                    max="59"
+                    value="00"
+                    class="w-1/2 p-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" 
+                />
+                </div>
+            </div>
+            <div id="todo-section" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mt-6 relative">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-300">Todo List</h2>
+                    <div class="flex items-center space-x-2">
+                        <button title="Add task" id="add-todo-toggle" class="text-green-500 hover:text-green-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                        <button id="todo-menu-toggle" title="Menu" class="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <div id="todo-menu" class="hidden bg-white dark:bg-gray-700 rounded-lg shadow-lg absolute right-0 mt-2 w-48 z-50">
+                            <ul class="py-1">
+                                <li>
+                                    <button id="clear-completed-tasks" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                        Clear Finished Tasks
+                                    </button>
+                                </li>
+                                <li>
+                                    <button id="delete-all-tasks" class="w-full text-left px-4 py-2 hover:bg-red-100 dark:hover:bg-red-800 text-red-600 dark:text-red-400">
+                                        Delete All Tasks
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="todo-input-container" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Add New Task</h3>
+                        <form id="todo-form" class="flex flex-col space-y-4">
+                            <div>
+                                <label for="todo-input" class="text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                                <input 
+                                    type="text" 
+                                    id="todo-input" 
+                                    placeholder="Enter a new task..." 
+                                    class="w-full p-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" 
+                                    required 
+                                />
+                            </div>
+                            <div>
+                                <label for="todo-note-input" class="text-sm font-medium text-gray-700 dark:text-gray-300">Note</label>
+                                <textarea 
+                                    id="todo-note-input" 
+                                    placeholder="Add a note... (optional)" 
+                                    class="w-full p-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 resize-none"
+                                    rows="3"
+                                ></textarea>
+                            </div>
+                            <div class="flex justify-end space-x-3">
+                                <button type="button" id="cancel-add" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 dark:bg-red-700 dark:hover:bg-red-600">
+                                    Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>                
+                
+                <div id="todo-edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Edit Task</h3>
+                        <form id="todo-edit-form" class="space-y-4">
+                            <div>
+                                <label for="edit-todo-input" class="text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                                <input 
+                                type="text" 
+                                id="edit-todo-input" 
+                                title="Edit task" 
+                                placeholder="Edit task" 
+                                class="w-full p-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" 
+                                required
+                                />
+                            </div>
+                            <div>
+                                <label for="edit-todo-note-input" class="text-sm font-medium text-gray-700 dark:text-gray-300">Note</label>
+                                <textarea 
+                                id="edit-todo-note-input" 
+                                placeholder="Edit note (optional)" 
+                                class="w-full p-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 resize-none"
+                                ></textarea>
+                            </div>
+                            <div class="flex justify-end space-x-3">
+                                <button type="button" id="cancel-edit" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 dark:bg-red-700 dark:hover:bg-red-600">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <ul id="todo-list" class="list-none space-y-3 mt-4"></ul>
+
+            <div id="settings-panel" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg p-8 w-[700px] min-h-[600px] max-h-[90vh] flex flex-col shadow-2xl dark:bg-gray-800 dark:text-gray-100">
+                    <div class="flex justify-between items-center border-b pb-4 mb-6 dark:border-gray-700">
+                        <h2 class="text-3xl font-bold dark:text-gray-100">Settings</h2>
+                        <button id="close-settings" class="text-gray-500 hover:text-red-500 text-2xl dark:text-gray-400 dark:hover:text-red-400">&times;</button>
+                    </div>
+            
+                    <div class="flex flex-grow overflow-hidden">
+                        <div class="w-1/3 border-r pr-6 overflow-y-auto dark:border-gray-700">
+                            <button id="tab-general" class="settings-tab w-full text-left py-3 px-4 rounded-lg bg-gray-300 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600">
+                                ⚙️ General
+                            </button>
+                            <button id="tab-alert" class="settings-tab w-full text-left py-3 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                🔔 Alert
+                            </button>
+                            <button id="tab-todo" class="settings-tab w-full text-left py-3 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                📝 Todo
+                            </button>                            
+                            <button id="tab-about" class="settings-tab w-full text-left py-3 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                ℹ️ About
+                            </button>
+                        </div>
+
+                        <div class="w-2/3 pl-6 overflow-y-auto">
+                            <div id="general-settings" class="settings-content space-y-6">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300">Appearance</h3>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label for="appearance-mode" class="text-gray-700 dark:text-gray-300">Theme</label>
+                                    <select id="appearance-mode" class="w-1/2 p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                                        <option value="dark">Dark</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300">End Time Display</h3>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-700 dark:text-gray-300">Enable</span>
+                                    <div class="relative inline-flex">
+                                        <input 
+                                            type="checkbox" 
+                                            id="toggle-end-time" 
+                                            class="sr-only peer" 
+                                            checked
+                                            title="Toggle End Time"
+                                        >
+                                        <label 
+                                            for="toggle-end-time" 
+                                            class="w-12 h-7 bg-gray-300 peer-checked:bg-green-500 rounded-full cursor-pointer relative 
+                                            transition-colors duration-200
+                                            after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                            after:bg-white after:rounded-full after:h-6 after:w-6 
+                                            after:transition-all
+                                            peer-checked:after:translate-x-5 dark:bg-gray-600 dark:peer-checked:bg-green-700"
+                                        >
+                                            <span class="sr-only">Toggle End Time</span>
+                                        </label>
+                                    </div>
+                                </div>                                
+                                <div id="time-format-container">
+                                    <div class="flex items-center justify-between">
+                                        <label for="time-format" class="text-gray-700 dark:text-gray-300">Time Format</label>
+                                        <select id="time-format" class="w-1/2 p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                                            <option value="12">12-hour</option>
+                                            <option value="24">24-hour</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <div id="alert-settings" class="settings-content hidden space-y-6">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300">Alarm Sound</h3>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-700 dark:text-gray-300">Enable</label>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="relative inline-flex">
+                                            <input 
+                                                type="checkbox" 
+                                                id="toggle-alarm-sound" 
+                                                class="sr-only peer" 
+                                                checked
+                                            >
+                                            <label 
+                                                for="toggle-alarm-sound" 
+                                                class="w-12 h-7 bg-gray-300 peer-checked:bg-green-500 rounded-full cursor-pointer relative 
+                                                transition-colors duration-200
+                                                after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                                after:bg-white after:rounded-full after:h-6 after:w-6 
+                                                after:transition-all
+                                                peer-checked:after:translate-x-5 dark:bg-gray-600 dark:peer-checked:bg-green-700"
+                                            >
+                                                <span class="sr-only">Toggle Alarm Sound</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-700 dark:text-gray-300">Preview</label>
+                                    <div class="flex items-center space-x-4">
+                                        <button id="test-alarm" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition dark:bg-blue-700 dark:hover:bg-blue-600">
+                                            Play
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300">Notifications</h3>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-700 dark:text-gray-300">Enable</label>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="relative inline-flex">
+                                            <input 
+                                                type="checkbox" 
+                                                id="toggle-notifications" 
+                                                class="sr-only peer" 
+                                                checked
+                                            >
+                                            <label 
+                                                for="toggle-notifications" 
+                                                class="w-12 h-7 bg-gray-300 peer-checked:bg-green-500 rounded-full cursor-pointer relative 
+                                                transition-colors duration-200
+                                                after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                                after:bg-white after:rounded-full after:h-6 after:w-6 
+                                                after:transition-all
+                                                peer-checked:after:translate-x-5 dark:bg-gray-600 dark:peer-checked:bg-green-700"
+                                            >
+                                                <span class="sr-only">Toggle Notifications</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-700 dark:text-gray-300">Permission</label>
+                                    <div class="flex items-center space-x-4">
+                                        <button id="grant-notification" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition dark:bg-blue-700 dark:hover:bg-blue-600">
+                                            Grant Permission
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="todo-settings" class="settings-content hidden space-y-6">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300">Show Todo List</h3>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <label for="toggle-todo-list" class="text-gray-700 dark:text-gray-300">Enable</label>
+                                    <div class="relative inline-flex">
+                                        <input 
+                                            type="checkbox" 
+                                            id="toggle-todo-list" 
+                                            class="sr-only peer" 
+                                            checked
+                                        />
+                                        <label 
+                                            for="toggle-todo-list" 
+                                            class="w-12 h-7 bg-gray-300 peer-checked:bg-green-500 rounded-full cursor-pointer relative 
+                                            transition-colors duration-200
+                                            after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                            after:bg-white after:rounded-full after:h-6 after:w-6 
+                                            after:transition-all
+                                            peer-checked:after:translate-x-5 dark:bg-gray-600 dark:peer-checked:bg-green-700"
+                                        >
+                                            <span class="sr-only">Toggle Todo List</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="about-settings" class="settings-content hidden space-y-6">
+                                <h3 class="text-2xl font-semibold mb-4 dark:text-gray-100">🍅 Tomato Project [Preview]</h3>
+                                <p class="text-gray-700 dark:text-gray-300">A simple Pomodoro timer to help you stay focused and productive.</p>
+                                <div class="border-t dark:border-gray-700 pt-6 flex flex-col items-center text-center">
+                                    <h4 class="text-xl font-semibold mb-4 dark:text-gray-100">Developer</h4>
+                                    <img src="https://github.com/york9675.png" alt="York" class="w-24 h-24 rounded-full object-cover mb-4">
+                                    <h5 class="text-lg font-semibold dark:text-gray-100 mb-2">York</h5>
+                                    <div class="flex space-x-3">
+                                        <a href="https://github.com/york9675" target="_blank" rel="noopener noreferrer" 
+                                           class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                                           title="GitHub">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                            </svg>
+                                        </a>
+                                        <a href="https://www.buymeacoffee.com/york0524" target="_blank" rel="noopener noreferrer"
+                                           class="text-gray-600 hover:text-yellow-800 dark:text-gray-400 dark:hover:text-yellow-200"
+                                           title="Buy Me A Coffee">
+                                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-1.001-1.379-.197-.069-.42-.098-.57-.241-.152-.143-.196-.366-.231-.572-.065-.378-.125-.756-.192-1.133-.057-.325-.102-.69-.25-.987-.195-.4-.597-.634-.996-.788a5.723 5.723 0 00-.626-.194c-1-.263-2.05-.36-3.077-.416a25.834 25.834 0 00-3.7.062c-.915.083-1.88.184-2.75.5-.318.116-.646.256-.888.501-.297.302-.393.77-.177 1.146.154.267.415.456.692.58.36.162.737.284 1.123.366 1.075.238 2.189.331 3.287.37 1.218.05 2.437.01 3.65-.118.299-.033.598-.073.896-.119.352-.054.578-.513.474-.834-.124-.383-.457-.531-.834-.473-.466.074-.96.108-1.382.146-1.177.08-2.358.082-3.536.006a22.228 22.228 0 01-1.157-.107c-.086-.01-.18-.025-.258-.036-.243-.036-.484-.08-.724-.13-.111-.027-.111-.185 0-.212h.005c.277-.06.557-.108.838-.147h.002c.131-.009.263-.032.394-.048a25.076 25.076 0 013.426-.12c.674.019 1.347.067 2.017.144l.228.031c.267.04.533.088.798.145.392.085.895.113 1.07.542.055.137.08.288.111.431l.319 1.484a.237.237 0 01-.199.284h-.003c-.037.006-.075.01-.112.015a36.704 36.704 0 01-4.743.295 37.059 37.059 0 01-4.699-.304c-.14-.017-.293-.042-.417-.06-.326-.048-.649-.108-.973-.161-.393-.065-.768-.032-1.123.161-.29.16-.527.404-.675.701-.154.316-.199.66-.267 1-.069.34-.176.707-.135 1.056.087.753.613 1.365 1.37 1.502a39.69 39.69 0 0011.343.376.483.483 0 01.535.53l-.071.697-1.018 9.907c-.041.41-.047.832-.125 1.237-.122.637-.553 1.028-1.182 1.171-.577.131-1.165.2-1.756.205-.656.004-1.31-.025-1.966-.022-.699.004-1.556-.06-2.095-.58-.475-.458-.54-1.174-.605-1.793l-.731-7.013-.322-3.094c-.037-.351-.286-.695-.678-.678-.336.015-.718.3-.678.679l.228 2.185.949 9.112c.147 1.344 1.174 2.068 2.446 2.272.742.12 1.503.144 2.257.156.966.016 1.942.053 2.892-.122 1.408-.258 2.465-1.198 2.616-2.657.34-3.332.683-6.663 1.024-9.995l.215-2.087a.484.484 0 01.39-.426c.402-.078.787-.212 1.074-.518.455-.488.546-1.124.385-1.766zm-1.478.772c-.145.137-.363.201-.578.233-2.416.359-4.866.54-7.308.46-1.748-.06-3.477-.254-5.207-.498-.17-.024-.353-.055-.47-.18-.22-.236-.111-.71-.054-.995.052-.26.152-.609.463-.646.484-.057 1.046.148 1.526.22.577.088 1.156.159 1.737.212 2.48.226 5.002.19 7.472-.14.45-.06.899-.13 1.345-.21.399-.072.84-.206 1.08.206.166.281.188.657.162.974a.544.544 0 01-.169.364zm-6.159 3.9c-.862.37-1.84.788-3.109.788a5.884 5.884 0 01-1.569-.217l.877 9.004c.065.78.717 1.38 1.5 1.38 0 0 1.243.065 1.658.065.447 0 1.786-.065 1.786-.065.783 0 1.434-.6 1.499-1.38l.94-9.95a3.996 3.996 0 00-1.322-.238c-.826 0-1.491.284-2.26.613z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">© 2025 York Development<br>Made with ❤️ in Taiwan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+            </div>
+
+            <div id="reset-confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">⚠️ Reset Timer?</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to reset the timer? Your progress will be lost.</p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="cancel-reset" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button id="confirm-reset" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 dark:bg-red-700 dark:hover:bg-red-600">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="todo-delete-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">⚠️ Delete Task?</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this task?</p>
+                        <div class="flex justify-end space-x-3">
+                            <button id="cancel-delete" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                Cancel
+                            </button>
+                            <button id="confirm-delete" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 dark:bg-red-700 dark:hover:bg-red-600">
+                                Delete
+                            </button>
+                        </div>
+               </div>
+            </div>
+
+            <div id="todo-clear-completed-tasks-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">⚠️ Clear Completed Tasks?</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to clear completed tasks? This action cannot be undone.</p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="cancel-clear-all" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button id="confirm-clear-all" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 dark:bg-red-700 dark:hover:bg-red-600">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="todo-delete-all-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">⚠️ Delete All Tasks?</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete all tasks? This action cannot be undone.</p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="cancel-delete-all" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button id="confirm-delete-all" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 dark:bg-red-700 dark:hover:bg-red-600">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pomodoro-info-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-2xl">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">🍅 What is Pomodoro?</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">
+                        The Pomodoro Technique is a time management method developed by Francesco Cirillo. 
+                        It uses a timer to break work into intervals, traditionally 25 minutes in length, 
+                        separated by short breaks. These intervals are called "Pomodoros." 
+                        After four Pomodoros, a longer break is taken.
+                    </p>
+                    <div class="flex justify-end">
+                        <button id="close-pomodoro-info" class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors duration-200 dark:bg-red-700 dark:hover:bg-red-600">
+                            Got it!
+                        </button>
+                    </div>
+                </div>
+            </div>            
+        
+        </div>
+
+        <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
+
+        <script src="script.js"></script>
+    </body>
+</html>

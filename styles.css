@@ -1,0 +1,50 @@
+@media (max-width: 640px) {
+    .container {
+        max-width: 100%;
+        padding: 0.5rem;
+    }
+    
+    .timer-container {
+        padding: 1rem !important;
+    }
+    
+    .timer-display {
+        font-size: 4rem !important;
+    }
+    
+    .mode-tabs {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .mode-tabs button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .action-buttons button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .settings-panel {
+        width: 95% !important;
+        max-height: 90vh;
+        margin: 0 auto;
+    }
+    
+    .settings-content-container {
+        flex-direction: column;
+    }
+    
+    .settings-sidebar, .settings-content {
+        width: 100% !important;
+        border-right: none !important;
+        padding: 0.5rem !important;
+    }
+}
