@@ -21,6 +21,9 @@
 > [!WARNING]\
 > This project is still under development.
 
+> [!NOTE]\
+> Desktop/Laptop/iPad is recommended for the best experience since the app is not optimized for mobile devices yet.
+
 ## Features
 
 - **Pomodoro Timer:** A simple timer to help you stay focused and productive.

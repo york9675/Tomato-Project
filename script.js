@@ -1,3 +1,10 @@
+// 私はちょうど何が重要か
+//
+// Flicker
+// by Porter Robinson
+//
+// 【=◈︿◈=】
+
 let storedShowEndTime = localStorage.getItem('showEndTime');
 let showEndTime = storedShowEndTime !== null ? JSON.parse(storedShowEndTime) : true;
 let timeFormat = localStorage.getItem('timeFormat') || '12';
@@ -480,7 +487,7 @@ function renderTodos() {
     todoList.innerHTML = '';
     todos.forEach((todo, index) => {
         const todoItem = document.createElement('li');
-        todoItem.className = 'flex flex-col p-3 bg-gray-100 dark:bg-gray-700 rounded-lg mb-2 shadow-sm draggable';
+        todoItem.className = 'flex flex-col p-3 bg-gray-100 dark:bg-gray-700 rounded-lg mb-2 shadow-sm draggable text-left';
         todoItem.draggable = true;
         todoItem.dataset.index = index;
 
@@ -505,7 +512,7 @@ function renderTodos() {
         editBtn.addEventListener('click', () => openEditModal(index));
         
         const completeBtn = document.createElement('button');
-        completeBtn.textContent = todo.completed ? 'Undo' : '✓';
+        completeBtn.textContent = todo.completed ? '↺' : '✓';
         completeBtn.className = `px-3 py-1 ${todo.completed 
             ? 'bg-gray-300 text-gray-600 dark:bg-gray-600 dark:text-gray-400' 
             : 'bg-green-500 text-white hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600'} 
@@ -513,7 +520,7 @@ function renderTodos() {
         completeBtn.addEventListener('click', () => toggleComplete(index));
         
         const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '✖';
+        deleteBtn.textContent = '❌';
         deleteBtn.className = 'text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-100 dark:hover:bg-gray-600';
         deleteBtn.addEventListener('click', () => showDeleteConfirmation(index));
         
@@ -524,7 +531,7 @@ function renderTodos() {
         if (todo.note) {
             const noteSection = document.createElement('div');
             noteSection.textContent = todo.note;
-            noteSection.className = 'text-sm text-gray-600 dark:text-gray-400 italic pl-8 whitespace-pre-wrap';
+            noteSection.className = 'text-sm text-gray-600 dark:text-gray-400 italic whitespace-pre-wrap text-left';
             todoItem.appendChild(noteSection);
         }
         
