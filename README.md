@@ -64,12 +64,6 @@ cd Tomato-Project
 
 3. Enjoy the app!
 
-## Technologies
-
-- **HTML5:** The structure of the app is built with HTML5.
-- **CSS3:** The styling of the app is created with CSS3.
-- **JavaScript:** The functionality of the app is implemented with JavaScript.
-
 ## Bug report / Feedback
 
 If you encounter any problems during use or have feedback, please create issues to report.
